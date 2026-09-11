@@ -19,8 +19,9 @@ const getUser = async (id: string): Promise<UserType | null> => {
     return user;
 }
 
-const deleteUser = async (id: string): Promise<void> => {
-    await User.findByIdAndDelete(id);
+const deleteUser = async (id: string): Promise<UserType | null> => {
+    const user = await User.findByIdAndDelete(id).lean();
+    return user;
 }
 
 export {createUser, getUser, getAllUsers, deleteUser};

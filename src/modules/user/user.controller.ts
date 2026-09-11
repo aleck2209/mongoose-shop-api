@@ -24,19 +24,22 @@ const getUserController = async (
 	res: Response,
 ) => {
 	const id = req.params.id;
-	if (!id) {
-		res.status(404).send("HTTP 404 Not Found");
+
+	if (!mongoose.Types.ObjectId.isValid(id)) {
+		res.status(400).json({
+			message: "Bad Request",
+		});
 		return;
 	}
 
-    if(!mongoose.Types.ObjectId.isValid(id)) {
-        res.status(400).json({
-            message: 'Bad Request'
-        })
-        return;
-    } 
-
 	const user = await getUser(id);
+
+	if (user === null) {
+		res.status(404).json({
+			message: "User not found",
+		});
+		return;
+	}
 
 	res.status(200).json(user);
 };
@@ -46,19 +49,21 @@ const deleteUserController = async (
 	res: Response,
 ) => {
 	const id = req.params.id;
-	if (!id) {
-		res.status(404).send("HTTP 404 Not Found");
+	if (!mongoose.Types.ObjectId.isValid(id)) {
+		res.status(400).json({
+			message: "Bad Request",
+		});
 		return;
 	}
 
-    if(!mongoose.Types.ObjectId.isValid(id)) {
-        res.status(400).json({
-            message: 'Bad Request'
-        })
-        return;
-    } 
+	const user = await deleteUser(id);
 
-	await deleteUser(id);
+	if (user === null) {
+		res.status(404).json({
+			message: "User not found",
+		});
+		return;
+	}
 
 	res.status(204).send();
 };
