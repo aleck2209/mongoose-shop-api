@@ -1,25 +1,26 @@
 import { User } from "./user.model.ts";
 import { type User as UserType, type UserCreate } from "./user.type.ts";
-import { type ObjectId } from "mongoose";
 
-const createUser = async (userData: UserCreate) => {
-    await User.create({
+const createUser = async (userData: UserCreate): Promise<UserType> => {
+    const user = await User.create({
         ...userData
-    })
+    });
+
+    return user;
 }
 
 const getAllUsers = async (): Promise<UserType[]> => {
     const users = await User.find().lean();
-    return users
+    return users;
 }
 
-const getUser = async (id: ObjectId): Promise<UserType | null> => {
-    const user = await User.findById(id).lean()
+const getUser = async (id: string): Promise<UserType | null> => {
+    const user = await User.findById(id).lean();
     return user;
 }
 
-const deleteUser = async (id: ObjectId): Promise<void> => {
-    await User.findByIdAndDelete(id)
+const deleteUser = async (id: string): Promise<void> => {
+    await User.findByIdAndDelete(id);
 }
 
-export {createUser, getUser, getAllUsers, deleteUser}
+export {createUser, getUser, getAllUsers, deleteUser};
