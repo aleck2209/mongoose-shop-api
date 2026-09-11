@@ -9,3 +9,9 @@ export type User = {
     createdAt: Date;
     updatedAt: Date;
 }
+
+export type UserCreate = {
+    name: string;
+    email: string;
+    age: number;
+}
