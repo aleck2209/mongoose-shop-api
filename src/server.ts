@@ -1,8 +1,11 @@
 import app from "./app.ts";
-import 'dotenv/config'
+import "dotenv/config";
+import { connectDatabase } from "./config/database.ts";
+
+await connectDatabase();
 
 const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+	console.log(`Server running on port ${PORT}`);
 });
