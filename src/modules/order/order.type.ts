@@ -1,33 +1,33 @@
-import type { ObjectId } from "mongoose";
+import type { Types } from "mongoose";
 
 type OrderStatus =
-	| "pending"
-	| "confirmed"
-	| "shipped"
-	| "delivered"
-	| "cancelled";
+    | "pending"
+    | "confirmed"
+    | "shipped"
+    | "delivered"
+    | "cancelled";
 
 export type OrderItem = {
-	productId: string | ObjectId;
-	quantity: number;
-	unitPrice: number;
-};
-
-export type OrderItemCreate = {
-    productId: string | ObjectId;
+    productId: Types.ObjectId;
     quantity: number;
+    unitPrice: number;
 };
 
 export type Order = {
-	user: string | ObjectId;
-	items: OrderItem[];
-	totalAmount: number;
-	status: OrderStatus;
+    user: Types.ObjectId;
+    items: OrderItem[];
+    totalAmount: number;
+    status: OrderStatus;
     createdAt: Date;
     updatedAt: Date;
 };
 
+export type OrderItemCreate = {
+    productId: string;
+    quantity: number;
+};
+
 export type OrderCreate = {
-    user: string | ObjectId;
-	items: OrderItemCreate[];
-}
+    user: string;
+    items: OrderItemCreate[];
+};
