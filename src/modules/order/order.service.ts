@@ -2,6 +2,7 @@ import type {
 	OrderCreate,
 	Order as OrderType,
 	OrderItem,
+	OrderStatus,
 } from "./order.type.ts";
 import { User } from "../user/user.model.ts";
 import { Product } from "../product/product.model.ts";
@@ -55,15 +56,15 @@ const createOrder = async (orderData: OrderCreate): Promise<OrderType> => {
 
 const getAllOrders = async (): Promise<OrderType[]> => {
 	return await Order.find()
-		.populate("user", { select: "name" })
-		.populate("items.productId", { select: "name, category" })
+		.populate("user", "name")
+		.populate("items.productId", "name category")
 		.lean();
 };
 
 const getOrder = async (orderId: string): Promise<OrderType | null> => {
 	return await Order.findById(orderId)
-		.populate("user", { select: "name" })
-		.populate("items.productId", { select: "name, category" })
+		.populate("user", "name")
+		.populate("items.productId","name, category")
 		.lean();
 };
 
@@ -71,4 +72,33 @@ const deleteOrder = async (orderId: string): Promise<OrderType | null> => {
 	return await Order.findByIdAndDelete(orderId).lean();
 };
 
-export { createOrder, getAllOrders, getOrder, deleteOrder };
+const updateOrderStatus = async (
+	orderId: string,
+	newStatus: OrderStatus,
+): Promise<OrderType> => {
+	const order = await Order.findById(orderId);
+	if (!order) {
+		throw new AppError(404, `Order not found`);
+	}
+
+	const allowedTransitions: Record<OrderStatus, OrderStatus[]> = {
+		pending: ["confirmed", "cancelled"],
+		confirmed: ["shipped", "cancelled"],
+		shipped: ["delivered"],
+		delivered: [],
+		cancelled: [],
+	};
+
+	if (!allowedTransitions[order.status].includes(newStatus)) {
+		throw new AppError(
+			400,
+			`Cannot change status from ${order.status} to ${newStatus}`,
+		);
+	}
+
+	order.status = newStatus;
+	await order.save();
+	return order;
+};
+
+export { createOrder, getAllOrders, getOrder, deleteOrder, updateOrderStatus };

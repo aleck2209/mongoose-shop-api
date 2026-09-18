@@ -1,10 +1,11 @@
 import type { Request, Response } from "express";
-import type { OrderCreate } from "./order.type.ts";
+import type { OrderCreate, OrderStatus } from "./order.type.ts";
 import {
 	createOrder,
 	getOrder,
 	getAllOrders,
 	deleteOrder,
+	updateOrderStatus
 } from "./order.service.ts";
 
 const createOrderController = async (req: Request, res: Response) => {
@@ -53,9 +54,22 @@ const deleteOrderController = async (
 	res.status(204).send();
 };
 
+const updateOrderStatusController = async (
+    req: Request<{ id: string }, {}, { status: OrderStatus }>,
+    res: Response,
+) => {
+    const id = req.params.id;
+    const status = req.body.status;
+
+    const order = await updateOrderStatus(id, status);
+
+    res.status(200).json(order);
+};
+
 export {
 	createOrderController,
 	getAllOrdersController,
 	getOrderController,
 	deleteOrderController,
+	updateOrderStatusController
 };

@@ -1,6 +1,6 @@
 import type { Types } from "mongoose";
 
-type OrderStatus =
+export type OrderStatus =
     | "pending"
     | "confirmed"
     | "shipped"
