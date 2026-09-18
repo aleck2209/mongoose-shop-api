@@ -53,15 +53,21 @@ const createOrder = async (orderData: OrderCreate): Promise<OrderType> => {
 };
 
 const getAllOrders = async (): Promise<OrderType[]> => {
-    return await Order.find().lean();
-}
+	return await Order.find()
+		.populate("user", { select: "name" })
+		.populate("items.productId", { select: "name, category" })
+		.lean();
+};
 
-const getOrder = async(orderId: string): Promise<OrderType | null> => {
-    return await Order.findById(orderId).lean()
-}
+const getOrder = async (orderId: string): Promise<OrderType | null> => {
+	return await Order.findById(orderId)
+		.populate("user", { select: "name" })
+		.populate("items.productId", { select: "name, category" })
+		.lean();
+};
 
-const deleteOrder = async(orderId: string): Promise<OrderType | null> => {
-    return await Order.findByIdAndDelete(orderId).lean()
-}
+const deleteOrder = async (orderId: string): Promise<OrderType | null> => {
+	return await Order.findByIdAndDelete(orderId).lean();
+};
 
 export { createOrder, getAllOrders, getOrder, deleteOrder };
