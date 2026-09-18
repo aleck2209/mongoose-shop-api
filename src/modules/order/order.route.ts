@@ -5,12 +5,13 @@ import {
 	getOrderController as getOrder,
 	deleteOrderController as deleteOrder,
 } from "./order.controller.ts";
+import isValidId from "../../middlewares/valid-id.middleware.ts";
 
 const orderRoutes = Router();
 
 orderRoutes.post('/', createOrder);
 orderRoutes.get('/', getAllOrders);
-orderRoutes.get('/:id', getOrder);
-orderRoutes.delete('/:id', deleteOrder);
+orderRoutes.get('/:id', isValidId, getOrder);
+orderRoutes.delete('/:id', isValidId, deleteOrder);
 
 export default orderRoutes;

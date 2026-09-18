@@ -1,7 +1,6 @@
 import { createProduct, getAllProducts, getProduct, deleteProduct } from "./product.service.ts";
 import type { Product, ProductCreate } from "./product.type.ts";
 import { type Request, type Response } from "express";
-import mongoose from "mongoose";
 
 const createProductController = async (req: Request, res: Response) => {
     const request: ProductCreate = req.body;
@@ -19,12 +18,6 @@ const getProductController = async (
     res: Response,
 ) => {
     const id = req.params.id;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        res.status(400).json({
-            message: "Bad Request",
-        });
-        return;
-    }
 
     const product = await getProduct(id);
     if (product === null) {
@@ -42,12 +35,6 @@ const deleteProductController = async (
     res: Response,
 ) => {
     const id = req.params.id;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        res.status(400).json({
-            message: "Bad Request",
-        });
-        return;
-    }
 
     const product = await deleteProduct(id);
     if (product === null) {

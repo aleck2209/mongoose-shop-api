@@ -24,14 +24,6 @@ const getUserController = async (
 	res: Response,
 ) => {
 	const id = req.params.id;
-
-	if (!mongoose.Types.ObjectId.isValid(id)) {
-		res.status(400).json({
-			message: "Bad Request",
-		});
-		return;
-	}
-
 	const user = await getUser(id);
 
 	if (user === null) {
@@ -49,13 +41,6 @@ const deleteUserController = async (
 	res: Response,
 ) => {
 	const id = req.params.id;
-	if (!mongoose.Types.ObjectId.isValid(id)) {
-		res.status(400).json({
-			message: "Bad Request",
-		});
-		return;
-	}
-
 	const user = await deleteUser(id);
 
 	if (user === null) {
