@@ -16,3 +16,9 @@ export type ProductCreate = {
     stock: number;
     category: string;
 }
+
+export type ProductListResult = {
+    products: Product[],
+    productCount: number,
+    totalPage: number
+}

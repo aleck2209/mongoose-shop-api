@@ -1,4 +1,4 @@
-import type { Product as ProductType, ProductCreate } from "./product.type.ts";
+import type { Product as ProductType, ProductCreate, ProductListResult } from "./product.type.ts";
 import { Product } from "./product.model.ts";
 
 const createProduct = async (
@@ -11,10 +11,43 @@ const createProduct = async (
 	return product;
 };
 
-const getAllProducts = async (): Promise<ProductType[]> => {
-	const products = await Product.find().lean();
+const getAllProducts = async (
+	search?: string,
+	category?: string,
+	page: number = 1,
+	limit: number = 10,
+): Promise<ProductListResult> => {
+	const skip = (page - 1) * limit;
 
-	return products;
+	const filter: Record<string, unknown> = {};
+	if (search) {
+		filter.name = {
+			$regex: search,
+			$options: "i",
+		};
+	}
+
+	if (category) {
+		filter.category = category;
+	}
+
+	const products = await Product.find(filter)
+		.select("name price category")
+		.sort({ price: 1 })
+		.skip(skip)
+		.limit(limit)
+		.lean();
+
+	const productCount = await Product.countDocuments(filter);
+	const totalPage = Math.ceil(productCount / limit)
+
+	const result = {
+		products,
+		productCount,
+		totalPage
+	}
+
+	return result;
 };
 
 const getProduct = async (productId: string): Promise<ProductType | null> => {
