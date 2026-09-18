@@ -5,6 +5,7 @@ import type {
 	Response,
 	NextFunction,
 } from "express";
+import AppError from "./app-error.middleware.ts";
 
 const errorMiddlware: ErrorRequestHandler = (
 	err: unknown,
@@ -43,6 +44,14 @@ const errorMiddlware: ErrorRequestHandler = (
         });
 
         return;
+	}
+
+	if (err instanceof AppError) {
+		res.status(err.statusCode).json({
+			message: err.message
+		})
+
+		return;
 	}
 
     console.error(err);

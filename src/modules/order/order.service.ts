@@ -6,12 +6,13 @@ import type {
 import { User } from "../user/user.model.ts";
 import { Product } from "../product/product.model.ts";
 import { Order } from "./order.model.ts";
+import AppError from "../../middlewares/app-error.middleware.ts";
 
 const createOrder = async (orderData: OrderCreate): Promise<OrderType> => {
 	const user = await User.findById(orderData.user).lean();
 
 	if (!user) {
-		throw new Error("User not found");
+		throw new AppError(404, "User not found");
 	}
 
 	let totalAmount = 0;
@@ -21,15 +22,15 @@ const createOrder = async (orderData: OrderCreate): Promise<OrderType> => {
 		const product = await Product.findById(item.productId).lean();
 
 		if (!product) {
-			throw new Error(`Product ${item.productId} not found`);
+			throw new AppError(404, `Product not found`);
 		}
 
 		if (!product.isActive) {
-			throw new Error(`Product ${product.name} is inactive`);
+			throw new AppError(400, `Product ${product.name} is inactive`);
 		}
 
 		if (product.stock < item.quantity) {
-			throw new Error(`Insufficient stock for ${product.name}`);
+			throw new AppError(400, `Insufficient stock for ${product.name}`);
 		}
 
 		const unitPrice = product.price;
